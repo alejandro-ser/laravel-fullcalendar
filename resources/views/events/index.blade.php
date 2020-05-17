@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="{{ asset('fullcalendar/bootstrap/main.css') }}">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css">
 <style>
-	.fc-event-container a {
+	.fc-event-container a,
+	.fc-list-table .fc-list-item {
 		cursor: pointer;
 	}
 </style>
@@ -41,27 +42,27 @@
 			<div class="form-row">
 				<div class="form-group col-md-12">
 					<label for="title">Title</label>
-					<input class="form-control" type="text" name="title" id="title">
+					<input class="form-control" type="text" name="title" id="title" required>
 				</div>
 
 				<div class="form-group col-md-6">
 					<label for="start_date">Start date</label>
-					<input class="form-control" type="date" name="start_date" id="start_date">
+					<input class="form-control" type="date" name="start_date" id="start_date" required>
 				</div>
 
 				<div class="form-group col-md-6">
 					<label for="start_time">Start time</label>
-            		<input class="form-control" type="time" min="01:00 a.m." max="23:59 p.m." step="600" name="start_time" id="start_time">
+            		<input class="form-control" type="time" min="01:00 a.m." max="23:59 p.m." step="600" name="start_time" id="start_time" required>
 				</div>
 
 				<div class="form-group col-md-6">
 					<label for="end_date">End date</label>
-            		<input class="form-control" type="date" name="end_date" id="end_date">
+            		<input class="form-control" type="date" name="end_date" id="end_date" required>
 				</div>
 
 				<div class="form-group col-md-6">
 					<label for="end_time">End time</label>
-            		<input class="form-control" type="time" min="01:00 a.m." max="23:59 p.m." step="600" name="end_time" id="end_time">
+            		<input class="form-control" type="time" min="01:00 a.m." max="23:59 p.m." step="600" name="end_time" id="end_time" required>
 				</div>
 
 				<div class="form-group col-md-12">

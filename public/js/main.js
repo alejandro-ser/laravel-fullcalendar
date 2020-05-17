@@ -9,6 +9,19 @@ document.addEventListener('DOMContentLoaded', function() {
         //defaultDate: new Date(2019,8,1),
         //defaultView: 'timeGridDay',
 
+        businessHours: [ // specify an array instead
+            {
+              daysOfWeek: [ 1, 2, 3, 4 ], // Monday, Tuesday, Wednesday
+              startTime: '12:00', // 8am
+              endTime: '20:00' // 6pm
+            },
+            {
+              daysOfWeek: [ 5, 6, 0 ], // Thursday, Friday
+              startTime: '10:00', // 10am
+              endTime: '22:00' // 4pm
+            }
+        ],
+
         // Setting header
         header: {
             left: 'today addNewEvent',
@@ -48,6 +61,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Clean form fields
                     cleanForm();
 
+                    // Enable star date field
+                    $('#start_date').prop('disabled', false);
+
                     // Setting date and time
                     var date = new Date();
                     var year = date.getFullYear();
@@ -60,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     $('#start_date').val(year+'-'+month+'-'+day);
                     $('#start_time').val('12:00');
                     $('#end_date').val(year+'-'+month+'-'+day);
-                    $('#end_time').val('12:00');
+                    $('#end_time').val('12:30');
 
                     // Show hide footer buttons
                     $("#btnAdd").show();
@@ -78,13 +94,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Clean form fields
             cleanForm();
             
+            // Disable star date field
             $('#start_date').prop('disabled', true);
 
             // Setting form fields with teh selected date and time
             $('#start_date').val(info.dateStr);
             $('#start_time').val('12:00');
             $('#end_date').val(info.dateStr);
-            $('#end_time').val('12:00');
+            $('#end_time').val('12:30');
             
             // Show hide footer buttons
             $("#btnAdd").show();
@@ -98,7 +115,8 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         // Config actions when clicking in an event
-        eventClick: function(info) {            
+        eventClick: function(info) {
+            // Enable star date field
             $('#start_date').prop('disabled', false);
 
             // Getting start date and time
@@ -155,38 +173,45 @@ document.addEventListener('DOMContentLoaded', function() {
     // Config add actions
     $('#btnAdd').click(function() {
         eventObj = getFormEventData("POST");
-        sendInfoEvent('',eventObj);
+        sendInfoEvent('', eventObj);
 	})
     
     // Config edit actions
 	$('#btnEdit').click(function() {
         eventObj = getFormEventData("PATCH");
-        sendInfoEvent('/'+$('#id').val(),eventObj);
+        sendInfoEvent('/'+$('#id').val(), eventObj);
     })
 
     // Config delete actions
 	$('#btnDelete').click(function() {
         eventObj = getFormEventData("DELETE");
-        sendInfoEvent('/'+$('#id').val(),eventObj);
+        sendInfoEvent('/'+$('#id').val(), eventObj);
 	})
 
     // Getting data from form event modal
     function getFormEventData(method) {
 
-        newEventObj = {
-            title: $('#title').val(),
-            start: $('#start_date').val()+" "+$('#start_time').val(),
-            end: $('#end_date').val()+" "+$('#end_time').val(),
-            color: $('#color').val(),
-            textColor: '#ffffff',
-            description: $('#description').val(),
-            '_token': $("meta[name='csrf-token']").attr("content"),
-            '_method': method
-        }
+        // Validate date and time
+        if (validateDate()) {
+            // Creating event data object
+            newEventObj = {
+                title: $('#title').val(),
+                start: $('#start_date').val()+" "+$('#start_time').val(),
+                end: $('#end_date').val()+" "+$('#end_time').val(),
+                color: $('#color').val(),
+                textColor: '#ffffff',
+                description: $('#description').val(),
+                '_token': $("meta[name='csrf-token']").attr("content"),
+                '_method': method
+            }
 
-        return newEventObj;
+            return newEventObj;            
+        } else {
+            return
+        }
     }
 
+    // Sendind event data object to the action
     function sendInfoEvent(action,eventObj) {
         $.ajax(
             {
@@ -197,13 +222,28 @@ document.addEventListener('DOMContentLoaded', function() {
 					$('#eventModal').modal('toggle');
 					calendar.refetchEvents();
 				},
-                error: function(error){ 
+                error: function(error){
                     console.log(error);
                 }
             }
         );
-	}
-	
+    }
+
+    // Validate date and time    
+    function validateDate(){
+        
+        if (($('#start_date').val() === $('#end_date').val())
+            && ($('#start_time').val() > $('#end_time').val())) {
+            alert("The end time cannot be less than the start time");
+        } else if ($('#start_date').val() > $('#end_date').val()) {
+            alert("The end date cannot be less than the start date");
+        } else {
+            return true;
+        }
+
+    }
+    
+    // Clean form fields
 	function cleanForm() {
 		$('#id').val(""),
 		$('#title').val(""),
